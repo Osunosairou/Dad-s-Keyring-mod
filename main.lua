@@ -45,7 +45,6 @@ function kringMod:onUpdate(player)
 
     -- spawns the item at the start of the run
     if game:GetFrameCount() == 1 then
-        print(kringId)
         Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, kringId, Vector(320,300), Vector(0,0), nil)
     end
 
