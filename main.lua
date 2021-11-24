@@ -1,5 +1,6 @@
 local kringMod = RegisterMod("Dad's Keyring", 1)
 local game = Game()
+local room = Game():GetRoom()
 local kringId = Isaac.GetItemIdByName("Dad's Keyring")
 local hasKRing = false
 local keys = {
@@ -11,6 +12,7 @@ local keys = {
 	storeKey = TrinketType.TRINKET_STORE_KEY
 }
 
+-- Randomize which key spawns
 local function selectKey()
     local keyNum = math.random(1, 100)
     if keyNum <= 25  then
@@ -28,6 +30,76 @@ local function selectKey()
     end
 end
 
+-- AddSmeltedTrinket function made by "kittenchilly" on Steam
+--removes the player's current trinkets, gives the player the one you provided, uses the smelter, then gives the player back the original trinkets.
+function AddSmeltedTrinket(trinket, player)
+    if not player then
+        player = Isaac.GetPlayer(0)
+    end
+
+    --get the trinkets they're currently holding
+    local trinket0 = player:GetTrinket(0)
+    local trinket1 = player:GetTrinket(1)
+
+    --remove them
+    if trinket0 ~= 0 then
+        player:TryRemoveTrinket(trinket0)
+    end
+    if trinket1 ~= 0 then
+        player:TryRemoveTrinket(trinket1)
+    end
+
+    player:AddTrinket(trinket) --add the trinket
+    player:UseActiveItem(CollectibleType.COLLECTIBLE_SMELTER, false, false, false, false) --smelt it
+    
+    --give their trinkets back
+    if trinket0 ~= 0 then
+        player:AddTrinket(trinket0)
+    end
+    if trinket1 ~= 0 then
+        player:AddTrinket(trinket1)
+    end
+end
+
+-- RemoveSmeltedTrinket function made by "Guwahavel#7089" on Discord
+function RemoveSmeltedTrinket(trinket, player)
+    if not player then
+        player = Isaac.GetPlayer(0)
+    end
+    local readd = 0
+    local trinket0 = player:GetTrinket(0)
+    local trinket1 = player:GetTrinket(1)
+    if trinket0 == trinket then
+        player:TryRemoveTrinket(trinket)
+        readd = readd + 1
+    end
+    if trinket1 == trinket then
+        player:TryRemoveTrinket(trinket)
+        readd = readd + 1
+    end
+    player:TryRemoveTrinket(trinket)
+    if readd > 0 then
+        for i = 0, readd do
+            player:AddTrinket(trinket)
+        end
+    end
+end
+
+-- Smelt any keys held
+local function smeltKeys(player)
+    local trinket0 = player:GetTrinket(0)
+    local trinket1 = player:GetTrinket(1)
+    for index, key in pairs(keys) do
+        if trinket0 == key then
+            AddSmeltedTrinket(trinket0, player)
+            player:TryRemoveTrinket(trinket0)
+        end
+        if trinket1 == key then
+            AddSmeltedTrinket(trinket1, player)
+            player:TryRemoveTrinket(trinket1)
+        end
+    end
+end
 
 -- Checks if the player has the item
 local function updateKRing(player)
@@ -42,14 +114,32 @@ kringMod:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, kringMod.onPlayerInit)
 
 -- Every major effect happens here
 function kringMod:onUpdate(player)
-
+    local spawnPos = room:FindFreePickupSpawnPosition(player.Position, 0, true, false)
+    --print(player.Position)
     -- spawns the item at the start of the run
     if game:GetFrameCount() == 1 then
         Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, kringId, Vector(320,300), Vector(0,0), nil)
     end
 
+    -- When the item is picked up for the first time
     if player:HasCollectible(kringId) and not hasKRing then
-        Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, selectKey(), Vector(320,280), Vector(0,0), nil)
+        Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, selectKey(), spawnPos, Vector(0,0), nil)
+    end
+
+    -- While the item is held
+    if player:HasCollectible(kringId) then
+        smeltKeys(player)
+    end
+
+    -- When the item is removed
+    if not player:HasCollectible(kringId) and hasKRing then
+        for index, key in pairs(keys) do
+            if player:HasTrinket(key, false) then
+                RemoveSmeltedTrinket(key, player)
+                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, key, spawnPos, Vector(0,0), nil)
+            end
+        end
+        
     end
 
     updateKRing(player)
