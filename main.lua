@@ -3,14 +3,30 @@ local game = Game()
 local kringId = Isaac.GetItemIdByName("Dad's Keyring")
 local hasKRing = false
 local keys = {
-    strangeKey = TrinketType.TRINKET_STRANGE_KEY,
     crystalKey = TrinketType.TRINKET_CRYSTAL_KEY,
+    strangeKey = TrinketType.TRINKET_STRANGE_KEY,
     blueKey = TrinketType.TRINKET_BLUE_KEY,
 	gildedKey = TrinketType.TRINKET_GILDED_KEY,
 	rustedKey = TrinketType.TRINKET_RUSTED_KEY,
 	storeKey = TrinketType.TRINKET_STORE_KEY
-
 }
+
+local function selectKey()
+    local keyNum = math.random(1, 100)
+    if keyNum <= 25  then
+        return keys.storeKey
+    elseif keyNum > 25 and keyNum <= 50 then
+        return keys.rustedKey
+    elseif keyNum > 50 and keyNum <= 65  then
+        return keys.gildedKey
+    elseif keyNum > 65 and keyNum <= 80  then
+        return keys.blueKey
+    elseif keyNum > 80 and keyNum <= 95  then
+        return keys.strangeKey
+    elseif keyNum > 95 and keyNum <= 100  then
+        return keys.crystalKey
+    end
+end
 
 
 -- Checks if the player has the item
@@ -34,7 +50,7 @@ function kringMod:onUpdate(player)
     end
 
     if player:HasCollectible(kringId) and not hasKRing then
-        Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, keys.storeKey, Vector(320,280), Vector(0,0), nil)
+        Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, selectKey(), Vector(320,280), Vector(0,0), nil)
     end
 
     updateKRing(player)
