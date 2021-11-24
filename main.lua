@@ -3,6 +3,7 @@ local game = Game()
 local room = Game():GetRoom()
 local kringId = Isaac.GetItemIdByName("Dad's Keyring")
 local hasKRing = false
+local keyQtd = 0
 local keys = {
     crystalKey = TrinketType.TRINKET_CRYSTAL_KEY,
     strangeKey = TrinketType.TRINKET_STRANGE_KEY,
@@ -93,10 +94,12 @@ local function smeltKeys(player)
         if trinket0 == key then
             AddSmeltedTrinket(trinket0, player)
             player:TryRemoveTrinket(trinket0)
+            keyQtd = keyQtd + 1
         end
         if trinket1 == key then
             AddSmeltedTrinket(trinket1, player)
             player:TryRemoveTrinket(trinket1)
+            keyQtd = keyQtd + 1
         end
     end
 end
@@ -133,13 +136,16 @@ function kringMod:onUpdate(player)
 
     -- When the item is removed
     if not player:HasCollectible(kringId) and hasKRing then
-        for index, key in pairs(keys) do
-            if player:HasTrinket(key, false) then
-                RemoveSmeltedTrinket(key, player)
-                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, key, spawnPos, Vector(0,0), nil)
+        -- Check all the key trinkets the player has
+        for i = 0, keyQtd, 1 do
+            for index, key in pairs(keys) do
+                -- Unsmelt and drop them into the ground
+                if player:HasTrinket(key, false) then
+                    RemoveSmeltedTrinket(key, player)
+                    Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, key, spawnPos, Vector(0,0), nil)
+                end
             end
         end
-        
     end
 
     updateKRing(player)
