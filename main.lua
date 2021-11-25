@@ -111,6 +111,8 @@ function kringMod:keySpawnChance(TrinketType)
     end
 end
 
+kringMod:AddCallback(ModCallbacks.MC_GET_TRINKET, kringMod.keySpawnChance)
+
 -- Checks if the player has the item
 local function updateKRing(player)
     hasKRing = player:HasCollectible(kringId)
@@ -139,7 +141,6 @@ function kringMod:onUpdate(player)
     -- While the item is held
     if player:HasCollectible(kringId) then
         smeltKeys(player)
-        kringMod:AddCallback(ModCallbacks.MC_GET_TRINKET, kringMod.keySpawnChance)
     end
 
     -- When the item is removed
