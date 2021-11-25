@@ -107,7 +107,7 @@ end
 function kringMod:keySpawnChance(TrinketType)
     local keyNum = math.random(1, 100)
     if keyNum >= 1 and keyNum <= 20 then
-        return keys
+        selectKey()
     end
 end
 
