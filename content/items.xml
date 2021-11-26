@@ -1,3 +1,3 @@
 <items gfxroot="gfx/items/" version="1">
-    <passive cache="" name="Dad's Keyring" description="poop" gfx="collectibles_dadskeyring.png"/>  
+    <passive cache="" name="Dad's Keyring" description="Extra key room + More key trinkets" gfx="collectibles_dadskeyring.png"/>  
 </items>

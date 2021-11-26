@@ -1,0 +1,10 @@
+<ItemPools>
+	<Pool Name="shop">
+		<!-- Dad's keyring -->
+		<Item Name="Dad's Keyring" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+	</Pool>
+    <Pool Name="goldenChest">
+		<!-- Dad's keyring -->
+		<Item Name="Dad's Keyring" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+	</Pool>
+</ItemPools>
