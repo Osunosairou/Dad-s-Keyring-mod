@@ -22,8 +22,6 @@ local checkKey = {
     gotCrystalKey = false
 }
 
-
-
 -- Randomize which key spawns
 local function selectKey()
     local keyNum = math.random(1, 100)
@@ -113,10 +111,6 @@ local function smeltKeys(player)
             keyQtd = keyQtd + 1
         end
     end
-end
-
-local function selectKeySpawnChance()
-
 end
 
 -- 20% of changing a trinket to a key trinket
@@ -248,6 +242,7 @@ function kringMod:onUpdate()
 end
 kringMod:AddCallback(ModCallbacks.MC_POST_PEFFECT_UPDATE, kringMod.onUpdate)
 
+-- EID integration
 if EID then
     EID:addCollectible(kringId, "Drops a key related trinket#All key trinkets from now on will be added to your inventory#Has a 20% chance of replacing found trinkets with key related ones ")
 end
