@@ -126,8 +126,6 @@ function kringMod:keySpawnChance(TrinketType)
         local player = game:GetPlayer(playerNum)
         if player:HasCollectible(kringId) then
             if keyNum >= 1 and keyNum <= 20 and usedKeys < 6 then
-                print(usedKeys)
-                print("callback kind of worked")
                 repeat
                     keyNum2 = math.random(1, 6)
                     if keyNum2 == 1 then
@@ -135,7 +133,6 @@ function kringMod:keySpawnChance(TrinketType)
                             gotKey = true
                             usedKeys = usedKeys + 1
                             checkKey.gotStoreKey = true
-                            print("callback worked")
                             return keys.storeKey
                         else
                             gotKey = false
@@ -146,7 +143,6 @@ function kringMod:keySpawnChance(TrinketType)
                             gotKey = true
                             usedKeys = usedKeys + 1
                             checkKey.gotRustedKey = true
-                            print("callback worked")
                             return keys.rustedKey 
                         else
                             gotKey = false
@@ -157,7 +153,6 @@ function kringMod:keySpawnChance(TrinketType)
                             gotKey = true
                             usedKeys = usedKeys + 1
                             checkKey.gotGildedKey = true
-                            print("callback worked")
                             return keys.gildedKey 
                         else
                             gotKey = false
@@ -168,7 +163,6 @@ function kringMod:keySpawnChance(TrinketType)
                             gotKey = true
                             usedKeys = usedKeys + 1
                             checkKey.gotBlueKey = true
-                            print("callback worked")
                             return keys.blueKey
                         else
                             gotKey = false
@@ -179,7 +173,6 @@ function kringMod:keySpawnChance(TrinketType)
                             gotKey = true
                             usedKeys = usedKeys + 1
                             checkKey.gotStrangeKey = true
-                            print("callback worked")
                             return keys.strangeKey
                         else
                             gotKey = false
@@ -190,7 +183,6 @@ function kringMod:keySpawnChance(TrinketType)
                             gotKey = true
                             usedKeys = usedKeys + 1
                             checkKey.gotCrystalKey = true
-                            print("callback worked")
                             return keys.crystalKey
                         else
                             gotKey = false
