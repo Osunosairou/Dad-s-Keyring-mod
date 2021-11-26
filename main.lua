@@ -5,12 +5,20 @@ local kringId = Isaac.GetItemIdByName("Dad's Keyring")
 local hasKRing = false
 local keyQtd = 0
 local keys = {
-    crystalKey = TrinketType.TRINKET_CRYSTAL_KEY,
-    strangeKey = TrinketType.TRINKET_STRANGE_KEY,
+    storeKey = TrinketType.TRINKET_STORE_KEY,
+    rustedKey = TrinketType.TRINKET_RUSTED_KEY,
+    gildedKey = TrinketType.TRINKET_GILDED_KEY,
     blueKey = TrinketType.TRINKET_BLUE_KEY,
-	gildedKey = TrinketType.TRINKET_GILDED_KEY,
-	rustedKey = TrinketType.TRINKET_RUSTED_KEY,
-	storeKey = TrinketType.TRINKET_STORE_KEY
+    strangeKey = TrinketType.TRINKET_STRANGE_KEY,
+    crystalKey = TrinketType.TRINKET_CRYSTAL_KEY
+}
+local checkKey = {
+    gotStoreKey = false,
+    gotRustedKey = false,
+    gotGildedKey = false,
+    gotBlueKey = false,
+    gotStrangeKey = false,
+    gotCrystalKey = false
 }
 
 -- Randomize which key spawns
@@ -104,13 +112,52 @@ local function smeltKeys(player)
     end
 end
 
-function kringMod:keySpawnChance(TrinketType)
-    local keyNum = math.random(1, 100)
-    if keyNum >= 1 and keyNum <= 20 then
-        selectKey()
-    end
+local function selectKeySpawnChance()
+
 end
 
+-- 20% of changing a trinket to a key trinket
+function kringMod:keySpawnChance(TrinketType)
+    local keyNum = math.random(1, 100)
+    for playerNum = 1, game:GetNumPlayers() do
+        local player = game:GetPlayer(playerNum)
+        if player:HasCollectible(kringId) then
+            if keyNum >= 1 and keyNum <= 20 then
+                print("callback kind of worked")
+                if checkKey.gotStoreKey == false then
+                    checkKey.gotStoreKey = true
+                    print("callback worked")
+                    return keys.storeKey
+               
+                elseif checkKey.gotRustedKey == false then
+                    checkKey.gotRustedKey = true
+                    print("callback worked")
+                    return keys.rustedKey
+                
+                elseif checkKey.gotGildedKey == false then
+                    checkKey.gotGildedKey = true
+                    print("callback worked")
+                    return keys.gildedKey
+               
+                elseif checkKey.gotBlueKey == false then
+                    checkKey.gotBlueKey = true
+                    print("callback worked")
+                    return keys.blueKey
+                
+                elseif checkKey.gotStrangeKey == false then
+                    checkKey.gotStrangeKey = true
+                    print("callback worked")
+                    return keys.strangeKey
+                
+                elseif checkKey.gotCrystalKey== false then
+                    checkKey.gotCrystalKey = true
+                    print("callback worked")
+                    return keys.crystalKey
+                end
+            end
+        end
+    end
+end
 kringMod:AddCallback(ModCallbacks.MC_GET_TRINKET, kringMod.keySpawnChance)
 
 -- Checks if the player has the item
@@ -125,39 +172,42 @@ end
 kringMod:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, kringMod.onPlayerInit)
 
 -- Every major effect happens here
-function kringMod:onUpdate(player)
-    local spawnPos = room:FindFreePickupSpawnPosition(player.Position, 0, true, false)
-    --print(player.Position)
-    -- spawns the item at the start of the run
-    if game:GetFrameCount() == 1 then
-        Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, kringId, Vector(320,300), Vector(0,0), nil)
-    end
+function kringMod:onUpdate()
+    -- Checks for every player
+    for playerNum = 1, game:GetNumPlayers() do
+        local player = game:GetPlayer(playerNum)
+        local spawnPos = room:FindFreePickupSpawnPosition(player.Position, 0, true, false)
 
-    -- When the item is picked up for the first time
-    if player:HasCollectible(kringId) and not hasKRing then
-        Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, selectKey(), spawnPos, Vector(0,0), nil)
-    end
+        -- spawns the item at the start of the run
+        if game:GetFrameCount() == 1 then
+            Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, kringId, Vector(320,300), Vector(0,0), nil)
+        end
 
-    -- While the item is held
-    if player:HasCollectible(kringId) then
-        smeltKeys(player)
-    end
+        -- When the item is picked up for the first time
+        if player:HasCollectible(kringId) and not hasKRing then
+            Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, selectKey(), spawnPos, Vector(0,0), nil)
+        end
 
-    -- When the item is removed
-    if not player:HasCollectible(kringId) and hasKRing then
-        -- Check all the key trinkets the player has
-        for i = 0, keyQtd, 1 do
-            for index, key in pairs(keys) do
-                -- Unsmelt and drop them into the ground
-                if player:HasTrinket(key, false) then
-                    RemoveSmeltedTrinket(key, player)
-                    Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, key, spawnPos, Vector(0,0), nil)
+        -- While the item is held
+        if player:HasCollectible(kringId) then
+            smeltKeys(player)
+        end
+
+        -- When the item is removed
+        if not player:HasCollectible(kringId) and hasKRing then
+            -- Check all the key trinkets the player has
+            for i = 0, keyQtd, 1 do
+                for index, key in pairs(keys) do
+                    -- Unsmelt and drop them into the ground
+                    if player:HasTrinket(key, false) then
+                        RemoveSmeltedTrinket(key, player)
+                        Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, key, spawnPos, Vector(0,0), nil)
+                    end
                 end
             end
         end
+        updateKRing(player)
     end
-
-    updateKRing(player)
 end
 kringMod:AddCallback(ModCallbacks.MC_POST_PEFFECT_UPDATE, kringMod.onUpdate)
 
