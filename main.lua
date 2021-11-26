@@ -22,6 +22,8 @@ local checkKey = {
     gotCrystalKey = false
 }
 
+
+
 -- Randomize which key spawns
 local function selectKey()
     local keyNum = math.random(1, 100)
@@ -245,3 +247,7 @@ function kringMod:onUpdate()
     end
 end
 kringMod:AddCallback(ModCallbacks.MC_POST_PEFFECT_UPDATE, kringMod.onUpdate)
+
+if EID then
+    EID:addCollectible(kringId, "Drops a key related trinket#All key trinkets from now on will be added to your inventory#Has a 20% chance of replacing found trinkets with key related ones ")
+end
