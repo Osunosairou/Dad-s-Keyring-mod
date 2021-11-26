@@ -4,6 +4,7 @@ local room = Game():GetRoom()
 local kringId = Isaac.GetItemIdByName("Dad's Keyring")
 local hasKRing = false
 local keyQtd = 0
+local usedKeys = 0
 local keys = {
     storeKey = TrinketType.TRINKET_STORE_KEY,
     rustedKey = TrinketType.TRINKET_RUSTED_KEY,
@@ -119,41 +120,83 @@ end
 -- 20% of changing a trinket to a key trinket
 function kringMod:keySpawnChance(TrinketType)
     local keyNum = math.random(1, 100)
+    local keyNum2
+    local gotKey = false
     for playerNum = 1, game:GetNumPlayers() do
         local player = game:GetPlayer(playerNum)
         if player:HasCollectible(kringId) then
-            if keyNum >= 1 and keyNum <= 20 then
+            if keyNum >= 1 and keyNum <= 20 and usedKeys < 6 then
+                print(usedKeys)
                 print("callback kind of worked")
-                if checkKey.gotStoreKey == false then
-                    checkKey.gotStoreKey = true
-                    print("callback worked")
-                    return keys.storeKey
-               
-                elseif checkKey.gotRustedKey == false then
-                    checkKey.gotRustedKey = true
-                    print("callback worked")
-                    return keys.rustedKey
-                
-                elseif checkKey.gotGildedKey == false then
-                    checkKey.gotGildedKey = true
-                    print("callback worked")
-                    return keys.gildedKey
-               
-                elseif checkKey.gotBlueKey == false then
-                    checkKey.gotBlueKey = true
-                    print("callback worked")
-                    return keys.blueKey
-                
-                elseif checkKey.gotStrangeKey == false then
-                    checkKey.gotStrangeKey = true
-                    print("callback worked")
-                    return keys.strangeKey
-                
-                elseif checkKey.gotCrystalKey== false then
-                    checkKey.gotCrystalKey = true
-                    print("callback worked")
-                    return keys.crystalKey
-                end
+                repeat
+                    keyNum2 = math.random(1, 6)
+                    if keyNum2 == 1 then
+                        if checkKey.gotStoreKey == false then
+                            gotKey = true
+                            usedKeys = usedKeys + 1
+                            checkKey.gotStoreKey = true
+                            print("callback worked")
+                            return keys.storeKey
+                        else
+                            gotKey = false
+                        end
+                    end
+                    if keyNum2 == 2 then
+                        if checkKey.gotRustedKey == false then
+                            gotKey = true
+                            usedKeys = usedKeys + 1
+                            checkKey.gotRustedKey = true
+                            print("callback worked")
+                            return keys.rustedKey 
+                        else
+                            gotKey = false
+                        end
+                    end
+                    if keyNum2 == 3 then
+                        if checkKey.gotGildedKey == false then
+                            gotKey = true
+                            usedKeys = usedKeys + 1
+                            checkKey.gotGildedKey = true
+                            print("callback worked")
+                            return keys.gildedKey 
+                        else
+                            gotKey = false
+                        end
+                    end
+                    if keyNum2 == 4 then
+                        if checkKey.gotBlueKey == false then
+                            gotKey = true
+                            usedKeys = usedKeys + 1
+                            checkKey.gotBlueKey = true
+                            print("callback worked")
+                            return keys.blueKey
+                        else
+                            gotKey = false
+                        end
+                    end
+                    if keyNum2 == 5 then
+                        if checkKey.gotStrangeKey == false then
+                            gotKey = true
+                            usedKeys = usedKeys + 1
+                            checkKey.gotStrangeKey = true
+                            print("callback worked")
+                            return keys.strangeKey
+                        else
+                            gotKey = false
+                        end
+                    end
+                    if keyNum2 == 6 then
+                        if checkKey.gotCrystalKey == false then
+                            gotKey = true
+                            usedKeys = usedKeys + 1
+                            checkKey.gotCrystalKey = true
+                            print("callback worked")
+                            return keys.crystalKey
+                        else
+                            gotKey = false
+                        end
+                    end
+                until gotKey == true
             end
         end
     end
