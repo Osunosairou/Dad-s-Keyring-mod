@@ -210,6 +210,3 @@ function kringMod:onUpdate()
     end
 end
 kringMod:AddCallback(ModCallbacks.MC_POST_PEFFECT_UPDATE, kringMod.onUpdate)
-
-
-
